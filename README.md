@@ -18,9 +18,3 @@ Automatically enrich and organize audiobooks by tagging `.m4b` and `.mp3` files 
 | `/volume1/Books/Audiobooks/untagged`          | `/volume1/Books/Audiobooks/untagged`           |
 | `/volume1/Books/Audiobookshelf/Audiobooks`    | `/volume1/Books/Audiobookshelf/Audiobooks`     |
 | `/volume1/Books/Audiobooks/fix`               | `/volume1/Books/Audiobooks/fix`                |
-
-## Docker Usage
-
-Build the container:
-```bash
-docker build -t autom4btag .
