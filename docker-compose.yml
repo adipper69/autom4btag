@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  autom4btag:
+    container_name: autom4btag
+    build: .
+    volumes:
+      - /volume1/Books/Audiobooks/untagged:/volume1/Books/Audiobooks/untagged
+      - /volume1/Books/Audiobookshelf/Audiobooks:/volume1/Books/Audiobookshelf/Audiobooks
+      - /volume1/Books/Audiobooks/fix:/volume1/Books/Audiobooks/fix
+    restart: unless-stopped
