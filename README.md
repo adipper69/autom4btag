@@ -18,3 +18,9 @@ Automatically enrich and organize audiobooks by tagging `.m4b` and `.mp3` files 
 | `/volume1/Books/Audiobooks/untagged`          | `/volume1/Books/Audiobooks/untagged`           |
 | `/volume1/Books/Audiobookshelf/Audiobooks`    | `/volume1/Books/Audiobookshelf/Audiobooks`     |
 | `/volume1/Books/Audiobooks/fix`               | `/volume1/Books/Audiobooks/fix`                |
+
+## Workflow (example)
+mp3 files>
+auto-m4b>
+this program>
+audiobookshelf
