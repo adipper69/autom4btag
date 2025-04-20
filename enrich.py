@@ -5,9 +5,9 @@ import requests
 from mutagen.mp4 import MP4, MP4Cover
 from mutagen.easyid3 import EasyID3
 
-UNTAGGED_DIR = "/volume1/Books/Audiobooks/untagged"
-FIX_DIR = "/volume1/Books/Audiobooks/fix"
-OUTPUT_BASE = "/volume1/Books/Audiobookshelf/Audiobooks"
+UNTAGGED_DIR = "/data/untagged"
+FIX_DIR = "/data/fix"
+OUTPUT_BASE = "/data/output"
 
 AUDIO_EXTENSIONS = [".m4b", ".mp3"]
 
