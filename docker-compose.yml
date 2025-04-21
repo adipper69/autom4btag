@@ -9,3 +9,7 @@ services:
       - /volume1/Books/Audiobooks/untagged:/data/untagged
       - /volume1/Books/Audiobookshelf/Audiobooks:/data/output
       - /volume1/Books/Audiobooks/fix:/data/fix
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    network_mode: bridge
