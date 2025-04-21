@@ -26,6 +26,16 @@ def is_safe_to_process(folder_path):
 
     return True
 
+def extract_tags_from_m4b(file_path):
+    try:
+        audio = MP4(file_path)
+        title = audio.get("\xa9nam", [""])[0]
+        author = audio.get("\xa9ART", [""])[0]
+        return title.strip(), author.strip()
+    except Exception as e:
+        print(f"⚠️ Failed to extract embedded tags: {e}")
+        return None, None
+
 def get_main_audio_file(path):
     audio_files = [f for f in os.listdir(path) if os.path.splitext(f)[1].lower() in AUDIO_EXTENSIONS]
     if not audio_files:
@@ -74,32 +84,45 @@ def tag_audio(file_path, metadata, cover_bytes):
         raise Exception(f"❌ Failed tagging {file_path}: {e}")
 
 def move_to_fix(src_path):
-    def move_to_fix(src_path):
     dest = os.path.join(FIX_DIR, os.path.basename(src_path))
     print(f"📦 Moving to fix: {src_path} → {dest}")
     shutil.move(src_path, dest)
 
 def process_folder(folder_path):
     print(f"📚 Processing: {folder_path}")
-    
     audio_file = get_main_audio_file(folder_path)
     if not audio_file:
-        print(f"⚠️ No audio files found in: {folder_path}")
+        print(f"⚠️ No audio file found in {folder_path}")
         return move_to_fix(folder_path)
 
-    guessed_title = os.path.splitext(audio_file)[0]
-    metadata_raw = query_audnexus(guessed_title)
+    audio_path = os.path.join(folder_path, audio_file)
+
+    # Step 1: Try to extract embedded tags
+    title, author = extract_tags_from_m4b(audio_path)
+    query = f"{title} {author}".strip()
+
+    # Step 2: Try querying with title + author
+    metadata_raw = query_audnexus(query)
+
+    # Step 3: If that fails, try just the title
+    if not metadata_raw and title:
+        print("🔁 Trying Audnexus again with title only...")
+        metadata_raw = query_audnexus(title)
+
+    # Step 4: Still nothing? Move to fix
     if not metadata_raw:
+        print("❌ Audnexus lookup failed even after fallback. Moving to fix.")
         return move_to_fix(folder_path)
 
+    # Step 5: Build metadata from Audnexus response
     metadata = {
-        "title": metadata_raw.get("title", "Unknown Title"),
-        "author": metadata_raw.get("author", "Unknown Author"),
+        "title": metadata_raw.get("title", title or "Unknown Title"),
+        "author": metadata_raw.get("author", author or "Unknown Author"),
         "series": metadata_raw.get("series", "Standalone")
     }
 
     print(f"✅ Metadata found: {metadata['title']} by {metadata['author']} (Series: {metadata['series']})")
-    
+
     cover_url = metadata_raw.get("coverUrl")
     cover_bytes = download_cover(cover_url) if cover_url else None
 
