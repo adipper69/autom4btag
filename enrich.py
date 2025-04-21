@@ -2,6 +2,7 @@ import os
 import shutil
 import json
 import requests
+import time
 from mutagen.mp4 import MP4, MP4Cover
 from mutagen.easyid3 import EasyID3
 
@@ -10,6 +11,20 @@ FIX_DIR = "/data/fix"
 OUTPUT_BASE = "/data/output"
 
 AUDIO_EXTENSIONS = [".m4b", ".mp3"]
+
+def is_safe_to_process(folder_path):
+    # 1. Skip if folder is less than 2 minutes old
+    age = time.time() - os.path.getmtime(folder_path)
+    if age < 120:
+        print(f"⏳ Skipping (too new): {folder_path}")
+        return False
+
+    # 2. Skip if folder has "-tmpfiles" in the name
+    if "-tmpfiles" in os.path.basename(folder_path).lower():
+        print(f"🛑 Skipping (in progress): {folder_path}")
+        return False
+
+    return True
 
 def get_main_audio_file(path):
     audio_files = [f for f in os.listdir(path) if os.path.splitext(f)[1].lower() in AUDIO_EXTENSIONS]
@@ -98,7 +113,7 @@ def process_folder(folder_path):
 def main():
     for entry in os.listdir(UNTAGGED_DIR):
         full_path = os.path.join(UNTAGGED_DIR, entry)
-        if os.path.isdir(full_path):
+        if os.path.isdir(full_path) and is_safe_to_process(full_path):
             try:
                 process_folder(full_path)
             except Exception as e:
