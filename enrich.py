@@ -33,7 +33,7 @@ def get_main_audio_file(path):
     return max(audio_files, key=lambda f: os.path.getsize(os.path.join(path, f)))
 
 def query_audnexus(title):
-    url = f"https://api.audnexus.pedrolamas.com/lookup?term={title}&type=all"
+    url = f"https://api.audnex.us/lookup?term={title}&type=all"
     r = requests.get(url)
     if r.status_code != 200:
         return None
