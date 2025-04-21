@@ -34,13 +34,10 @@ def clean_title(text):
 def extract_tags_from_m4b(file_path):
     try:
         audio = MP4(file_path)
-        raw_title = audio.get("\xa9nam", [""])[0]
-        raw_author = audio.get("\xa9ART", [""])[0]
-
-        title = clean_title(raw_title)
-        author = raw_author.strip()
-
-        return title, author
+        title = audio.get("\xa9alb", [""])[0]  # Album = Book Title
+        author = audio.get("aART", [""]) or audio.get("\xa9ART", [""])
+        author = author[0] if author else ""
+        return title.strip(), author.strip()
     except Exception as e:
         print(f"⚠️ Failed to extract embedded tags: {e}")
         return None, None
@@ -60,10 +57,10 @@ def query_audnexus(title):
         items = r.json().get("items", [])
         if not items:
             print(f"⚠️ No metadata found for: {title}")
-        return items[0] if items else None
+        return items
     except requests.RequestException as e:
         print(f"❌ Metadata lookup failed for '{title}': {e}")
-        return None
+        return []
 
 def download_cover(cover_url):
     r = requests.get(cover_url)
@@ -108,17 +105,28 @@ def process_folder(folder_path):
 
     # Step 1: Try to extract embedded tags
     title, author = extract_tags_from_m4b(audio_path)
-    query = f"{title} {author}".strip()
+    if not title:
+        print("❌ No title found in tags. Moving to fix.")
+        return move_to_fix(folder_path)
 
-    # Step 2: Try querying with title + author
-    metadata_raw = query_audnexus(query)
+    query = title
+    results = query_audnexus(query)
 
-    # Step 3: If that fails, try just the title
-    if not metadata_raw and title:
-        print("🔁 Trying Audnexus again with title only...")
-        metadata_raw = query_audnexus(title)
+    # Step 2: Match author if available
+    metadata_raw = None
+    if results:
+        for item in results:
+          if author and author.lower() in item.get("author", "").lower():
+                metadata_raw = item
+                print(f"🎯 Author match found: {item['title']} by {item['author']}")
+                break
 
-    # Step 4: Still nothing? Move to fix
+    # Step 3: Fallback to first result if no author matched
+    if not metadata_raw and results:
+        metadata_raw = results[0]
+        print(f"⚠️ No author match. Using first result: {metadata_raw['title']} by {metadata_raw['author']}")
+
+    # Step 4: Still nothing? Crash out
     if not metadata_raw:
         print("❌ Audnexus lookup failed even after fallback. Moving to fix.")
         return move_to_fix(folder_path)
