@@ -3,6 +3,7 @@ import shutil
 import json
 import requests
 import time
+import re
 from mutagen.mp4 import MP4, MP4Cover
 from mutagen.easyid3 import EasyID3
 
@@ -26,12 +27,20 @@ def is_safe_to_process(folder_path):
 
     return True
 
+def clean_title(text):
+    # Remove leading track numbers like "01 of 10 - " or "01 - "
+    return re.sub(r'^\s*\d{1,2}( of \d{1,2})?[\s\-–:]+', '', text).strip()
+
 def extract_tags_from_m4b(file_path):
     try:
         audio = MP4(file_path)
-        title = audio.get("\xa9nam", [""])[0]
-        author = audio.get("\xa9ART", [""])[0]
-        return title.strip(), author.strip()
+        raw_title = audio.get("\xa9nam", [""])[0]
+        raw_author = audio.get("\xa9ART", [""])[0]
+
+        title = clean_title(raw_title)
+        author = raw_author.strip()
+
+        return title, author
     except Exception as e:
         print(f"⚠️ Failed to extract embedded tags: {e}")
         return None, None
