@@ -1,13 +1,13 @@
 # autom4btag
 
-Automatically enrich and organize audiobooks by tagging `.m4b` and `.mp3` files using anonymous Audible metadata (via Audnexus), and structuring them for use in Audiobookshelf.
+This container build on seanap's auto-m4b tool for audiobook handling. Instead of using beets-audible I made this as a little project. It automatically  organizes audiobooks by tagging `.m4b` and `.mp3` files using anonymous Audible metadata (via Audnexus), and structuring them for use in Audiobookshelf. 
 
 ## Features
 
 - Scans `/untagged` folder for new audiobook folders
 - Extracts metadata using **Audnexus** (no login required)
 - Tags audio files using **Mutagen**
-- Moves organized books into `/Author/Series/Book Title/`
+- Moves organized books into `/Author/Series/Book Title/` for organization
 - Problem folders are routed to `/fix` for manual cleanup
 - Runs every 5 minutes via a loop inside the container
 
@@ -24,3 +24,6 @@ mp3 files>
 auto-m4b>
 this program>
 audiobookshelf
+
+## Future Work
+I should probably build out proper logging of errors but this is good enough for now. 
