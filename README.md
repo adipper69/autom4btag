@@ -11,18 +11,40 @@ This container build on seanap's auto-m4b tool for audiobook handling. Instead o
 - Problem folders are routed to `/fix` for manual cleanup
 - Runs every 5 minutes via a loop inside the container
 
-## Volume Mapping (example)
+## Volume Mapping (same as auto-m4b)
 
-| Host Path                                      | Container Path                                 |
-|-----------------------------------------------|------------------------------------------------|
-| `/volume1/Books/Audiobooks/untagged`          | `/volume1/Books/Audiobooks/untagged`           |
-| `/volume1/Books/Audiobookshelf/Audiobooks`    | `/volume1/Books/Audiobookshelf/Audiobooks`     |
-| `/volume1/Books/Audiobooks/fix`               | `/volume1/Books/Audiobooks/fix`                |
 
-## Workflow (example)
-mp3 files>
-auto-m4b>
-this program>
+Audiobookshelf
+│
+└───Audiobooks # Audiobookshelf default library
+temp
+│
+└───recentlyadded # Input folder Add new books here
+│     │     book1.m4b
+│     |     book2.mp3
+|     └─────book3
+│           │   01-book3.mp3
+│           │   ... 
+└───merge # folder auto-m4b uses to combine mp3's
+│     └─────book2
+│           │   01-book2.mp3
+│           │   ...
+└───untagged # auto-m4b output folder where this container works
+│     └─────book4
+│           │   book4.m4b
+└───delete # needed by auto-m4b
+|
+└───fix # All books with errors go here
+|
+└───backup # Backups incase anything goes wrong in auto-m4b, unused by this container
+      └─────book2
+            │   01-book2.mp3
+            │   ... 
+
+## Workflow
+mp3 files >
+auto-m4b >
+this program >
 audiobookshelf
 
 ## Future Work
