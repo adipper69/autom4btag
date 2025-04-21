@@ -13,38 +13,37 @@ This container build on seanap's auto-m4b tool for audiobook handling. Instead o
 
 ## Volume Mapping (same as auto-m4b)
 
+<details> <summary>Click to expand</summary>
+Audiobookshelf/
+└── Audiobooks/                 # Audiobookshelf default library
 
-Audiobookshelf
+temp/
+├── recentlyadded/             # Input folder - add new books here
+│   ├── book1.m4b
+│   ├── book2.mp3
+│   └── book3/
+│       ├── 01-book3.mp3
+│       └── ...
 │
-└───Audiobooks            # Audiobookshelf default library
-
-temp
+├── merge/                     # Folder auto-m4b uses to combine mp3s
+│   └── book2/
+│       ├── 01-book2.mp3
+│       └── ...
 │
-└───recentlyadded         # Input folder - Add new books here
-│     │   book1.m4b
-│     │   book2.mp3
-│     └───book3/
-│         │   01-book3.mp3
-│         │   ...
+├── untagged/                  # auto-m4b output folder (autom4btag works here)
+│   └── book4/
+│       └── book4.m4b
+│
+├── delete/                    # Needed by auto-m4b (internal use)
+│
+├── fix/                       # All books with errors go here
+│
+└── backup/                    # Backups (unused by autom4btag)
+    └── book2/
+        ├── 01-book2.mp3
+        └── ...
 
-└───merge                 # Folder auto-m4b uses to combine mp3s
-│     └───book2/
-│         │   01-book2.mp3
-│         │   ...
-
-└───untagged              # auto-m4b output folder where autom4btag works
-│     └───book4/
-│         │   book4.m4b
-
-└───delete                # Needed by auto-m4b (internal use)
-
-└───fix                   # All books with errors go here
-
-└───backup                # Backups in case anything goes wrong (unused by autom4btag)
-      └───book2/
-          │   01-book2.mp3
-          │   ...
-
+</details>
 
 ## Workflow
 mp3 files >
