@@ -34,13 +34,16 @@ def get_main_audio_file(path):
 
 def query_audnexus(title):
     url = f"https://api.audnex.us/lookup?term={title}&type=all"
-    r = requests.get(url)
-    if r.status_code != 200:
-        return None
+    print(f"🔎 Querying metadata for: {title}")
     try:
+        r = requests.get(url, timeout=10)
+        r.raise_for_status()
         items = r.json().get("items", [])
+        if not items:
+            print(f"⚠️ No metadata found for: {title}")
         return items[0] if items else None
-    except json.JSONDecodeError:
+    except requests.RequestException as e:
+        print(f"❌ Metadata lookup failed for '{title}': {e}")
         return None
 
 def download_cover(cover_url):
@@ -50,31 +53,38 @@ def download_cover(cover_url):
     return r.content
 
 def tag_audio(file_path, metadata, cover_bytes):
-    ext = os.path.splitext(file_path)[1].lower()
-    if ext == ".m4b":
-        audio = MP4(file_path)
-        audio["\xa9nam"] = metadata["title"]
-        audio["\xa9ART"] = metadata["author"]
-        audio["\xa9alb"] = metadata["series"]
-        if cover_bytes:
-            audio["covr"] = [MP4Cover(cover_bytes, imageformat=MP4Cover.FORMAT_JPEG)]
-        audio.save()
-    elif ext == ".mp3":
-        audio = EasyID3(file_path)
-        audio["title"] = metadata["title"]
-        audio["artist"] = metadata["author"]
-        audio["album"] = metadata["series"]
-        audio.save()
+    try:
+        ext = os.path.splitext(file_path)[1].lower()
+        print(f"🏷 Tagging: {file_path}")
+        if ext == ".m4b":
+            audio = MP4(file_path)
+            audio["\xa9nam"] = metadata["title"]
+            audio["\xa9ART"] = metadata["author"]
+            audio["\xa9alb"] = metadata["series"]
+            if cover_bytes:
+                audio["covr"] = [MP4Cover(cover_bytes, imageformat=MP4Cover.FORMAT_JPEG)]
+            audio.save()
+        elif ext == ".mp3":
+            audio = EasyID3(file_path)
+            audio["title"] = metadata["title"]
+            audio["artist"] = metadata["author"]
+            audio["album"] = metadata["series"]
+            audio.save()
+    except Exception as e:
+        raise Exception(f"❌ Failed tagging {file_path}: {e}")
 
 def move_to_fix(src_path):
+    def move_to_fix(src_path):
     dest = os.path.join(FIX_DIR, os.path.basename(src_path))
+    print(f"📦 Moving to fix: {src_path} → {dest}")
     shutil.move(src_path, dest)
-    print(f"❌ Moved to fix: {src_path}")
 
 def process_folder(folder_path):
     print(f"📚 Processing: {folder_path}")
+    
     audio_file = get_main_audio_file(folder_path)
     if not audio_file:
+        print(f"⚠️ No audio files found in: {folder_path}")
         return move_to_fix(folder_path)
 
     guessed_title = os.path.splitext(audio_file)[0]
@@ -88,6 +98,8 @@ def process_folder(folder_path):
         "series": metadata_raw.get("series", "Standalone")
     }
 
+    print(f"✅ Metadata found: {metadata['title']} by {metadata['author']} (Series: {metadata['series']})")
+    
     cover_url = metadata_raw.get("coverUrl")
     cover_bytes = download_cover(cover_url) if cover_url else None
 
