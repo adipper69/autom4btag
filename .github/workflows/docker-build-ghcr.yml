@@ -3,8 +3,8 @@ name: Build and Push to GHCR
 on:
   push:
     branches:
-      - main  # Runs when you push to the main branch
-      paths:  #only runs if these files are changed
+        - main  # Runs when you push to the main branch
+    paths:  #only runs if these files are changed
         - 'Dockerfile'
         - '**/*.py'
         - 'requirements.txt'
