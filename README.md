@@ -16,30 +16,35 @@ This container build on seanap's auto-m4b tool for audiobook handling. Instead o
 
 Audiobookshelf
 │
-└───Audiobooks # Audiobookshelf default library
+└───Audiobooks            # Audiobookshelf default library
+
 temp
 │
-└───recentlyadded # Input folder Add new books here
-│     │     book1.m4b
-│     |     book2.mp3
-|     └─────book3
-│           │   01-book3.mp3
-│           │   ... 
-└───merge # folder auto-m4b uses to combine mp3's
-│     └─────book2
-│           │   01-book2.mp3
-│           │   ...
-└───untagged # auto-m4b output folder where this container works
-│     └─────book4
-│           │   book4.m4b
-└───delete # needed by auto-m4b
-|
-└───fix # All books with errors go here
-|
-└───backup # Backups incase anything goes wrong in auto-m4b, unused by this container
-      └─────book2
-            │   01-book2.mp3
-            │   ... 
+└───recentlyadded         # Input folder - Add new books here
+│     │   book1.m4b
+│     │   book2.mp3
+│     └───book3/
+│         │   01-book3.mp3
+│         │   ...
+
+└───merge                 # Folder auto-m4b uses to combine mp3s
+│     └───book2/
+│         │   01-book2.mp3
+│         │   ...
+
+└───untagged              # auto-m4b output folder where autom4btag works
+│     └───book4/
+│         │   book4.m4b
+
+└───delete                # Needed by auto-m4b (internal use)
+
+└───fix                   # All books with errors go here
+
+└───backup                # Backups in case anything goes wrong (unused by autom4btag)
+      └───book2/
+          │   01-book2.mp3
+          │   ...
+
 
 ## Workflow
 mp3 files >
