@@ -1,4 +1,5 @@
 # autom4btag
+Not working yet: runs into issues with audnexus
 
 This container build on seanap's auto-m4b tool for audiobook handling. Instead of using beets-audible I made this as a little project. It automatically  organizes audiobooks by tagging `.m4b` and `.mp3` files using anonymous Audible metadata (via Audnexus), and structuring them for use in Audiobookshelf. 
 
