@@ -13,7 +13,7 @@ This container build on seanap's auto-m4b tool for audiobook handling. Instead o
 
 ## Volume Mapping (same as auto-m4b)
 
-<details> <summary>Click to expand</summary>
+```sh
 Audiobookshelf/
 └── Audiobooks/                 # Audiobookshelf default library
 
@@ -42,9 +42,7 @@ temp/
     └── book2/
         ├── 01-book2.mp3
         └── ...
-
-</details>
-
+```
 ## Workflow
 mp3 files >
 auto-m4b >
