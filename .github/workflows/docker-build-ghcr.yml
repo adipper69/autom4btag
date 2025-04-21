@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main  # Runs when you push to the main branch
+      paths:  #only runs if these files are changed
+        - 'Dockerfile'
+        - '**/*.py'
+        - 'requirements.txt'
+        - 'run.sh'
   workflow_dispatch:  # Allows manual triggering
 
 jobs:
